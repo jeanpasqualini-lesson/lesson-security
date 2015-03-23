@@ -15,6 +15,8 @@ use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
  */
 class LoginPasswordToken extends AbstractToken
 {
+    private $password;
+
     /**
      * @param string $login
      * @param string $password
@@ -25,6 +27,7 @@ class LoginPasswordToken extends AbstractToken
         parent::__construct($roles);
         parent::setAuthenticated(count($roles) > 0);
         $this->setUser((string) $login);
+        $this->password = $password;
     }
 
     /**
@@ -32,6 +35,6 @@ class LoginPasswordToken extends AbstractToken
      */
     public function getCredentials()
     {
-        return;
+        return $this->password;
     }
 }

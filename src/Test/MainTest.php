@@ -84,24 +84,24 @@ class MainTest implements TestInterface, EventSubscriberInterface
          */
         $output = $event->getOutput();
 
-        $tokenStorage = new TokenStorage(new AnonymousToken("lol", array()));
+        $tokenStorage = new \Storage\TokenStorage(new AnonymousToken("lol", array()));
 
         $authentificationManager = new AuthenticationProviderManager(array(
             new ArrayAuthenticationProvider(array(
                 "john" => array(
                     "roles" => array("ROLE_USER"),
+                    "password" => "gates"
                 ),
             )),
             new ArrayAuthenticationProvider(array(
                 "jules" => array(
                     "roles" => array("ROLE_ADMIN"),
+                    "password" => "vernes"
                 ),
             )),
         ));
 
-        $accessDecisionManager = new AccessDecisionManager(array(
-            new RoleVoter(),
-        ));
+        $accessDecisionManager = new \Manager\AccessDecisionManager();
 
         $authListeners = array(
             new ConsoleAuthenticationListener($authentificationManager, $tokenStorage),
