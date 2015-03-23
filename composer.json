@@ -1,0 +1,23 @@
+{
+  "name": "lesson-jeanpasqualini/lesson-security",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "author's name",
+      "email": "email@example.com"
+    }
+  ],
+  "autoload" :
+  {
+     "psr-4" :
+     {
+        "" : "src/"
+     }
+  },
+  "require": {
+    "symfony/security": "2.6.x-dev",
+    "symfony/console": "2.6.x-dev"
+  }
+}
