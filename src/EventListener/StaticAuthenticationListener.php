@@ -55,6 +55,7 @@ class StaticAuthenticationListener implements AuthenticationListenerInterface
         $ouput = $event->getOutput();
 
         if ($this->tokenStorage->getToken() && $this->tokenStorage->getToken()->isAuthenticated()) {
+            $ouput->write("[SKIP] Deja authentifier");
             return;
         }
 

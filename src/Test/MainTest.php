@@ -10,6 +10,7 @@ namespace Test;
 
 use Event\ConsoleEvent;
 use EventListener\ConsoleAuthenticationListener;
+use EventListener\FileAuthentificationListener;
 use EventListener\StaticAuthenticationListener;
 use Interfaces\TestInterface;
 use Provider\ArrayAuthenticationProvider;
@@ -105,6 +106,7 @@ class MainTest implements TestInterface, EventSubscriberInterface
 
         $authListeners = array(
             new ConsoleAuthenticationListener($authentificationManager, $tokenStorage),
+            new FileAuthentificationListener($authentificationManager, $tokenStorage),
             new StaticAuthenticationListener("jules", "vernes", $authentificationManager, $tokenStorage),
         );
 
@@ -112,6 +114,8 @@ class MainTest implements TestInterface, EventSubscriberInterface
             echo "=== AuthListener : ".get_class($authListener)." ===".PHP_EOL;
             $authListener->handle($event);
         }
+
+        echo PHP_EOL.PHP_EOL;
 
         if ($tokenStorage->getToken() && $tokenStorage->getToken()->isAuthenticated()) {
             $output->writeln("authenticated succes : ".$tokenStorage->getToken()->getUsername());
