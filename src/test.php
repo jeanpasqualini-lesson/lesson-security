@@ -4,6 +4,7 @@ require "../vendor/autoload.php";
 
 $tests = array(
     new \Test\MainTest(),
+    new \Test\GuardAuthenticatorTest(),
 );
 
 foreach ($tests as $test) {
