@@ -13,11 +13,18 @@
   {
      "psr-4" :
      {
-        "" : "src/"
+        "" : "src/",
+       "tests\\" : "tests/"
      }
   },
   "require": {
     "symfony/security": "3.0.*",
-    "symfony/console": "3.0.*"
+    "symfony/console": "3.0.*",
+    "phpunit/phpunit": "^4.8",
+    "symfony/config": "3.0.*",
+    "symfony/dependency-injection": "3.0.*",
+    "symfony/security-bundle": "3.0.9",
+    "symfony/framework-bundle": "3.0.*",
+    "symfony/browser-kit": "3.0.*"
   }
 }
