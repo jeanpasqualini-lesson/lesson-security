@@ -3,6 +3,7 @@ namespace tests\Functionnal;
 
 use GuardAuthenticator\StaticGuardAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\RouteCollectionBuilder;
@@ -45,6 +46,13 @@ class GuardTest extends WebTestCase
                             guard:
                                 authenticators:
                                     - app.authenticator.static
+                        mobile:
+                            pattern: ^/api
+                            anonymous: false
+                            guard:
+                                authenticators:
+                                    - app.authenticator.query_string
+
                         anonymous:
                             anonymous: true
                             pattern: ^/anonymous
@@ -52,6 +60,7 @@ class GuardTest extends WebTestCase
                     access_control:
                         - { path: ^/user/home, roles: [ROLE_USER] }
                         - { path: ^/admin/home, roles: [ROLE_ADMIN] }
+                        - { path: ^/api, roles: [ROLE_USER] }
 
                 services:
                     app.authenticator.static:
@@ -59,8 +68,8 @@ class GuardTest extends WebTestCase
                     app.authenticator.query_string:
                         class: <?php echo QueryStringGuardAuthenticator::class.PHP_EOL; ?>
                         calls:
-                            - [setUsernameField, ['username']]
-                            - [setPasswordField, ['password']]
+                            - [setUsernameField, ['_username']]
+                            - [setPasswordField, ['_password']]
                 <?php
             }
 
@@ -74,11 +83,20 @@ class GuardTest extends WebTestCase
                 $routes->add($path='/anonymous/home', $controller='kernel:homeAction', $name='anonymous_home');
 
                 $routes->add($path='/nonauthenticated/home', $controller='kernel:homeAction', $name='notauthenticated_home');
+
+                $routes->add($path='/api/home', $controller='kernel:apiHomeAction', $name='api_home');
             }
 
             public function homeAction()
             {
                 return new Response('home');
+            }
+
+            public function apiHomeAction()
+            {
+                return new JsonResponse(array(
+                    'title' => 'home'
+                ));
             }
         };
     }
@@ -139,5 +157,36 @@ class GuardTest extends WebTestCase
 
         $this->assertNull($client->getContainer()->get('security.token_storage')->getToken());
         $this->assertEquals('home', $client->getResponse()->getContent());
+    }
+
+    public function testSuccessAuthenticatedWithMobileFirewall()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/home?_username=john&_password=gates');
+
+        $this->assertEquals(
+            array('title' => 'home'),
+            json_decode($client->getResponse()->getContent(), true),
+            $client->getResponse()->getContent()
+        );
+    }
+
+    public function testNotAuthenticatedWithMobileFirewall()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/home');
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
+    }
+
+    public function testAuthenticatedWithBadCredentialWithMobileFirewal()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/home?_username=admin&_password=admin');
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 }

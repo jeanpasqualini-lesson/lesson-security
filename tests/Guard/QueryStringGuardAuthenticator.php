@@ -35,14 +35,17 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
  */
 class QueryStringGuardAuthenticator extends AbstractGuardAuthenticator
 {
+    protected $usernameField;
+    protected $passwordField;
+
     public function setUsernameField($fieldName)
     {
-
+        $this->usernameField = $fieldName;
     }
 
     public function setPasswordField($fieldName)
     {
-
+        $this->passwordField = $fieldName;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
@@ -52,32 +55,39 @@ class QueryStringGuardAuthenticator extends AbstractGuardAuthenticator
 
     public function getCredentials(Request $request)
     {
-        // TODO: Implement getCredentials() method.
+        $credidential = array(
+            'username' => $request->query->get($this->usernameField, null),
+            'password' => $request->query->get($this->passwordField, null),
+        );
+
+        return (null !== $credidential['username'] || null !== $credidential['password'])
+            ? $credidential
+            : null;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        // TODO: Implement getUser() method.
+        return $userProvider->loadUserByUsername($credentials['username']);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // TODO: Implement checkCredentials() method.
+        return $user->getPassword() === $credentials['password'];
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        // TODO: Implement onAuthenticationFailure() method.
+        return new Response('not authorized', Response::HTTP_FORBIDDEN);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        return;
     }
 
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
+        return true;
     }
 
 }
