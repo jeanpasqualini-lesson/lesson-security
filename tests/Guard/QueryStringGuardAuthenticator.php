@@ -37,6 +37,7 @@ class QueryStringGuardAuthenticator extends AbstractGuardAuthenticator
 {
     protected $usernameField;
     protected $passwordField;
+    protected $activeRememberMe;
 
     public function setUsernameField($fieldName)
     {
@@ -46,6 +47,11 @@ class QueryStringGuardAuthenticator extends AbstractGuardAuthenticator
     public function setPasswordField($fieldName)
     {
         $this->passwordField = $fieldName;
+    }
+
+    public function activeRememberMe()
+    {
+        $this->activeRememberMe = true;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
@@ -82,12 +88,12 @@ class QueryStringGuardAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return;
+        return ($this->activeRememberMe) ? new Response() : null;
     }
 
     public function supportsRememberMe()
     {
-        return true;
+        return $this->activeRememberMe;
     }
 
 }
