@@ -21,7 +21,9 @@ class GuardTest extends WebTestCase
 {
     protected static function createKernel(array $options = array())
     {
-        return new Class extends TestKernel {
+        $environment = isset($options['environment']) ? $options['environment'] : 'guard';
+
+        return new Class($environment) extends TestKernel {
             public function registerContainerConfigurationInternal()
             {
                 ?>
@@ -47,6 +49,7 @@ class GuardTest extends WebTestCase
                                 authenticators:
                                     - app.authenticator.static
                         mobile:
+                            stateless: true
                             pattern: ^/api
                             anonymous: false
                             guard:

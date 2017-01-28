@@ -9,6 +9,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -44,7 +45,7 @@ abstract class TestKernel extends Kernel
 
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/symfony-cache';
+        return sys_get_temp_dir().'/lesson-security-'.$this->environment.'-symfony-cache';
     }
 
     public function getLogDir()
