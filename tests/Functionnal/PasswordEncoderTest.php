@@ -11,6 +11,7 @@ namespace UserFixture {
     abstract class UserPlainText implements UserInterface {}
     abstract class UserPlainTextWithSalt implements UserInterface {}
     abstract class UserBcrypt implements UserInterface {}
+    abstract class UserPbkdf2 implements UserInterface {}
 }
 
 namespace Encoder {
@@ -48,6 +49,7 @@ namespace tests\Functionnal {
     use UserFixture\UserBcrypt;
     use UserFixture\UserCustomEncoder;
     use UserFixture\UserMessageDigestMd5;
+    use UserFixture\UserPbkdf2;
     use UserFixture\UserPlainText;
     use UserFixture\UserPlainTextWithSalt;
     use UserFixture\UserSha512Alternative1;
@@ -78,6 +80,8 @@ namespace tests\Functionnal {
                             <?php echo UserSha512Alternative1::class ?>: sha512
                             <?php echo UserSha512Alternative2::class ?>:
                                 algorithm: sha512
+                                encode_as_base64: true
+                                iterations: 5000
 
                             <?php echo UserCustomEncoder::class ?>:
                                 id: app.encoder.reverse
@@ -92,6 +96,13 @@ namespace tests\Functionnal {
                             <?php echo UserBcrypt::class ?>:
                                 algorithm: bcrypt
                                 cost: 13
+
+                            <?php echo UserPbkdf2::class ?>:
+                                algorithm: pbkdf2
+                                hash_algorithm: sha512
+                                encode_as_base64: true
+                                iterations: 1000
+                                key_length: 40
 
                         providers:
                             main:
@@ -203,6 +214,13 @@ namespace tests\Functionnal {
             $passwordEncoded = $this->encode(UserPlainTextWithSalt::class, $password = 'admin', $salt = 'pokemon');
 
             $this->assertEquals('admin{pokemon}', $passwordEncoded);
+        }
+
+        public function testPbkdf2()
+        {
+            $passwordEncoded = $this->encode(UserPbkdf2::class, $password = 'admin');
+
+            $this->assertEquals('vEoWC4+1FCXNFQUvvKy752acAyAAkuQnEeG+Og5ybXegIDrD97n7fw==', $passwordEncoded);
         }
     }
 }
