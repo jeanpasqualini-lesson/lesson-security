@@ -20,6 +20,15 @@ class FileProvider implements UserProviderInterface
 
     public function loadUserByUsername($username)
     {
+        $data = str_replace(array("\r", "\n"), "", file_get_contents($this->filePath));
+
+        list($storedUsername, $password) = explode(":", $data);
+
+        if ($username === $storedUsername)
+        {
+            return new User($username, $password, array('ROLE_USER'));
+        }
+
         throw new UsernameNotFoundException();
     }
 

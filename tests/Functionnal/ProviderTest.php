@@ -51,6 +51,7 @@ class ProviderTest extends WebTestCase
                     firewalls:
                         use_memory_provider:
                             pattern: ^/security/use_memory_provider
+                            provider: my_memory_provider
                             guard:
                                 authenticators:
                                     - app.authenticator.query_string
@@ -61,6 +62,7 @@ class ProviderTest extends WebTestCase
                                     - app.authenticator.query_string
                         use_custom_provider:
                             pattern: ^/security/use_custom_provider
+                            provider: my_custom_provider
                             guard:
                                 authenticators:
                                     - app.authenticator.query_string
@@ -81,7 +83,7 @@ class ProviderTest extends WebTestCase
                                 priority: 1
                     app.user_provider.file:
                         class: <?php echo FileProvider::class.PHP_EOL; ?>
-                        arguments: [%kernel.root_dir%]
+                        arguments: ["%kernel.root_dir%/../Fixture/username.password"]
                 <?php
             }
 
@@ -129,7 +131,7 @@ class ProviderTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/security/use_custom_provider/home?_username=john&_password=gates');
+        $client->request('GET', '/security/use_custom_provider/home?_username=jules&_password=vernes');
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 

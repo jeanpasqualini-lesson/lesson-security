@@ -22,10 +22,12 @@ abstract class TestKernel extends Kernel
     }
 
     protected $yamlSpace = 16;
+    protected $options;
 
     // KERNEL
-    public function __construct($environment = 'dev', $debug = true)
+    public function __construct($environment = 'dev', $debug = true, array $options = array())
     {
+        $this->options = $options;
         parent::__construct($environment, $debug);
     }
 
