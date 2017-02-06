@@ -137,6 +137,23 @@ namespace tests\Functionnal {
             );
 
             $this->assertTrue($authorizationChecker->isGranted('ROLE_USER'));
+
+            /** @var AuthorizationChecker $authorizationChecker */
+            $authorizationChecker = $this->createAuthorizationChecker(
+                $userRoles                  = array('ROLE_USER'),
+                $votes                      = array(
+                    VoterInterface::ACCESS_DENIED,
+                    VoterInterface::ACCESS_GRANTED,
+                    VoterInterface::ACCESS_GRANTED,
+                    VoterInterface::ACCESS_DENIED,
+                    VoterInterface::ACCESS_GRANTED,
+                ),
+                $strategy                   = AccessDecisionManager::STRATEGY_CONSENSUS,
+                $allowIfAllAbstain          = false,
+                $allowIfEqualGrantedDenied  = true
+            );
+
+            $this->assertTrue($authorizationChecker->isGranted('ROLE_USER'));
         }
 
         public function testGrantedWithAllowIfAllAbstain()
